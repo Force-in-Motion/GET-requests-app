@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import customtkinter as ctk
-from config.config import *
-
+from config.config_main_page import *
+from service.processing import Processing as pg
 
 class MainFrame(ctk.CTkFrame):
-    def __init__(self, main_page: MainPage, *args, **kwargs):
+    def __init__(self, parent_page: MainPage, *args, **kwargs):
         """
         Создает фрейм главной страницы, включая виджеты, расположенные на ней
         :param main_page: главная страница
@@ -13,10 +13,10 @@ class MainFrame(ctk.CTkFrame):
         :param kwargs: именованные аргументы
         """
         super().__init__(*args, **kwargs)
-        self.__main_page = main_page
-        self.__main_label = None
+        self.__parent_page = parent_page
         self.__config_labels()
         self.__config_btn()
+        self.__config_combobox()
 
 
     def __config_labels(self) -> None:
@@ -25,7 +25,13 @@ class MainFrame(ctk.CTkFrame):
         :return: None
         """
         self.__main_label = ctk.CTkLabel(self, text=mlt, font=mlf)
-        self.__main_label.place(relx=0.15, rely=0.1)
+        self.__main_label.place(relx=0.11, rely=0.1)
+
+
+    def __config_combobox(self):
+        self.__combobox = ctk.CTkComboBox(self, width=cb_wh, height=cb_ht, values=val, font=cb_f, justify=cb_jf, dropdown_font=cb_f)
+        self.__combobox.place(relx=0.125, rely=0.25)
+
 
 
     def __config_btn(self) -> None:
@@ -33,31 +39,16 @@ class MainFrame(ctk.CTkFrame):
         Создает кнопки страницы, их параметры и стили
         :return: None
         """
-        self.__password_btn = ctk.CTkButton(self, width=btn_wh, height=btn_ht, corner_radius=btn_cr, fg_color=btn_fgc,
-                                            text_color=btn_tc, text=pwb_t, hover_color=btn_hc, font=btn_f)
-        self.__password_btn.place(relx=0.19, rely=0.25)
-        self.__password_btn.configure()
-
-        self.__gravity_btn = ctk.CTkButton(self, width=btn_wh, height=btn_ht, corner_radius=btn_cr, fg_color=btn_fgc,
-                                            text_color=btn_tc, text=gv_t, hover_color=btn_hc, font=btn_f)
-        self.__gravity_btn.place(relx=0.19, rely=0.4)
-        self.__gravity_btn.configure()
-
-        self.__fines_btn = ctk.CTkButton(self, width=btn_wh, height=btn_ht, corner_radius=btn_cr, fg_color=btn_fgc,
-                                            text_color=btn_tc, text=fin_t, hover_color=btn_hc, font=btn_f)
-        self.__fines_btn.place(relx=0.19, rely=0.55)
-        self.__fines_btn.configure()
-
-        self.__currency_translation_btn = ctk.CTkButton(self, width=btn_wh, height=btn_ht, corner_radius=btn_cr, fg_color=btn_fgc,
-                                            text_color=btn_tc, text=curt_t, hover_color=btn_hc, font=btn_f)
-        self.__currency_translation_btn.place(relx=0.19, rely=0.7)
-        self.__currency_translation_btn.configure()
-
+        self.__confirm_btn = ctk.CTkButton(self, width=cf_wh, height=cf_ht, corner_radius=cf_cr, fg_color=cf_fgc,
+                                            text_color=cf_tc, text=cf_t, hover_color=cf_hc, font=cf_f)
+        self.__confirm_btn.place(relx=0.725, rely=0.25)
+        self.__confirm_btn.configure()
 
         self.__exit_btn = ctk.CTkButton(self, width=ex_wh, height=ex_ht, corner_radius=ex_cr, fg_color=ex_fgc,
                                             text_color=ex_tc, text=ex_t, hover_color=ex_hc, font=ex_f)
-        self.__exit_btn.place(relx=0.3, rely=0.84)
-        self.__exit_btn.configure(command=self.__main_page.on_exit_click())
+        self.__exit_btn.place(relx=0.2, rely=0.75)
+        self.__exit_btn.configure(command=pg.on_exit_click)
+
 
 
 class MainPage(ctk.CTk):
@@ -66,7 +57,7 @@ class MainPage(ctk.CTk):
         Создает главную страницу приложения, ее параметры и стили, а так же формирует главный фрейм страницы
         """
         super().__init__()
-        self.protocol("WM_DELETE_WINDOW", self.on_exit_click)
+        self.protocol("WM_DELETE_WINDOW", pg.on_exit_click)
         self.__config_window()
         self.__config_frame()
 
@@ -89,12 +80,6 @@ class MainPage(ctk.CTk):
         self.title(title)
         self.resizable(rzb_wh, rzb_ht)
 
-    def on_exit_click(self) -> None:
-        """
-        Закрывает главное окно приложения
-        :return:
-        """
-        self.destroy()
 
     @classmethod
     def run(cls) -> None:

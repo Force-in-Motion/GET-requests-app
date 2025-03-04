@@ -1,5 +1,6 @@
 import requests
 
-req = requests.get('http://localhost:8000/password?length=12')
+class Url:
 
-print(req.json())
+    password = requests.get('http://localhost:8000/password?length=12')
+
